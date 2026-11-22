@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S J Tour and Travels</title><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><a class="brand" href="#"><span class="brandmark">SJ</span><span id="brandName">S J TOUR AND TRAVELS</span></a>
+<nav><a href="#home">Home</a><a href="#about">About</a><a href="#fleet">Vehicles & Rates</a><a href="#booking">Enquiry</a><a href="#contact">Contact</a><a class="adminlink" href="/admin.html">Admin</a></nav></header>
+<main>
+<section class="hero" id="home"><div class="hero-copy"><p class="eyebrow">TRAVEL WITH CONFIDENCE</p><h1 id="heroTitle">Your Journey,<br><em>Our Responsibility.</em></h1><p id="heroTagline">Comfortable journeys. Reliable service.</p><a class="btn" href="#fleet">Explore our vehicles</a></div></section>
+<section class="section intro" id="about"><p class="eyebrow">WELCOME</p><h2>Travel made comfortable</h2><p id="aboutText"></p><p id="locationText" class="muted"></p></section>
+<section class="section fleet" id="fleet"><p class="eyebrow">OUR FLEET</p><h2>Choose your vehicle</h2><p class="muted">Vehicle availability and final fare are confirmed by our team.</p><div id="vehicles" class="vehicle-grid"></div></section>
+<section class="section booking" id="booking"><div><p class="eyebrow">PLAN YOUR TRIP</p><h2>Send a booking enquiry</h2><p class="muted">Fill in your trip details. WhatsApp will open with your enquiry ready to send.</p></div>
+<form id="bookingForm"><label>Your name<input id="customerName" required placeholder="Enter your name"></label><label>Mobile number<input id="customerPhone" required type="tel" placeholder="Your phone number"></label><label>Vehicle<select id="vehicleChoice" required><option value="">Choose a vehicle</option></select></label><div class="two"><label>Pickup location<input id="pickup" required placeholder="Pickup"></label><label>Destination<input id="destination" required placeholder="Destination"></label></div><div class="two"><label>Travel date<input id="travelDate" type="date" required></label><label>Approx. kilometres<input id="distance" type="number" min="1" placeholder="Approx. KM"></label></div><label>Additional requirements<textarea id="requirements" rows="3" placeholder="Passengers, luggage, return trip, etc."></textarea></label><button class="btn" type="submit">Send enquiry on WhatsApp ↗</button><p class="small muted">This form does not take payment or confirm a booking.</p></form></section>
+<section class="section contact" id="contact"><p class="eyebrow">GET IN TOUCH</p><h2>Let's plan your next journey</h2><p id="contactLocation"></p><p id="contactPhone"></p><a class="btn" id="contactWhatsApp" href="#" target="_blank" rel="noopener">Chat on WhatsApp</a></section>
+</main><footer><span id="footerText"></span><a href="/admin.html">Admin login</a></footer>
+<a class="float-wa" id="floatWhatsApp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a>
+<script src="/site.js"></script>
+</body></html>

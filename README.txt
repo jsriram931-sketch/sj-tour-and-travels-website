@@ -67,3 +67,10 @@ LOCAL WINDOWS NOTE
 PowerShell may block npm.ps1. Use npm.cmd commands, for example:
   npm.cmd install
   npm.cmd start
+
+
+VEHICLE PHOTO UPLOAD
+- In Admin > Vehicles & rates, choose a JPG, PNG or WEBP photo from your computer.
+- Maximum photo size is 5 MB.
+- Uploaded photos are stored in the Neon PostgreSQL database, not on Render's temporary disk.
+- Make sure your Neon database has enough storage for your photos.

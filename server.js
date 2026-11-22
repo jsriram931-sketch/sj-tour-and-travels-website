@@ -3,6 +3,7 @@ const session = require("express-session");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 const path = require("path");
+const multer = require("multer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,12 @@ async function initializeDatabase() {
       id INTEGER PRIMARY KEY CHECK (id = 1),
       username TEXT NOT NULL,
       password_hash TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS vehicle_images (
+      id SERIAL PRIMARY KEY,
+      mime_type TEXT NOT NULL,
+      image_data BYTEA NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `);
 
@@ -87,6 +94,14 @@ app.use(session({
   }
 }));
 app.use(express.static(path.join(__dirname, "public")));
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    cb(allowed.includes(file.mimetype) ? null : new Error("Please choose a JPG, PNG or WEBP image."), allowed.includes(file.mimetype));
+  }
+});
 
 async function settingsObject() {
   const result = await pool.query("SELECT key,value FROM settings");
@@ -150,6 +165,27 @@ app.get("/api/admin/data", isAdmin, async (req, res, next) => {
   catch (err) { next(err); }
 });
 
+app.post("/api/admin/upload-image", isAdmin, imageUpload.single("photo"), async (req, res, next) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Choose a vehicle photo first." });
+    const result = await pool.query(
+      "INSERT INTO vehicle_images(mime_type,image_data) VALUES($1,$2) RETURNING id",
+      [req.file.mimetype, req.file.buffer]
+    );
+    res.json({ ok: true, image: `/api/vehicle-images/${result.rows[0].id}` });
+  } catch (err) { next(err); }
+});
+
+app.get("/api/vehicle-images/:id", async (req, res, next) => {
+  try {
+    const result = await pool.query("SELECT mime_type,image_data FROM vehicle_images WHERE id=$1", [req.params.id]);
+    if (!result.rowCount) return res.sendStatus(404);
+    res.set("Content-Type", result.rows[0].mime_type);
+    res.set("Cache-Control", "public, max-age=31536000, immutable");
+    res.send(result.rows[0].image_data);
+  } catch (err) { next(err); }
+});
+
 app.put("/api/admin/settings", isAdmin, async (req, res, next) => {
   try {
     for (const key of Object.keys(defaults)) {
@@ -200,6 +236,12 @@ app.delete("/api/admin/vehicles/:id", isAdmin, async (req, res, next) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
+  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({ error: "Image is too large. Please choose an image under 5 MB." });
+  }
+  if (err.message && err.message.startsWith("Please choose")) {
+    return res.status(400).json({ error: err.message });
+  }
   res.status(500).json({ error: "A server error occurred. Please try again." });
 });
 
